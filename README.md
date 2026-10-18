@@ -1,9 +1,16 @@
 # Text Topic Classifier
 
 A supervised machine-learning project comparing TF-IDF text classifiers using
-scikit-learn and tracking experiments with MLflow. This is independent of
-[Doc-Bot](https://github.com/issa89ai/doc-bot), a PDF RAG application; these
-classifiers are not part of its question-answering pipeline.
+scikit-learn and tracking experiments with MLflow.
+
+## Scope and architecture
+
+Labeled text -> stratified splits -> TF-IDF -> classifier training -> validation
+selection -> final test -> saved pipeline and experiment records.
+
+This repository owns its training code, dependencies, tests, CI and local MLflow
+artifacts. It needs no other project checkout, shared virtual environment, PDF
+assistant, or external model-serving process.
 
 ## Task and data
 
@@ -56,7 +63,8 @@ python -m mlflow ui --backend-store-uri sqlite:///mlflow.db --host 127.0.0.1
 Run the UI command from this repository. Open http://127.0.0.1:5000.
 Training needs internet on the first dataset download. Tests use synthetic text,
 need no dataset download, and do not launch training or an MLflow server.
-Importing `train.py` does not run experiments. No Ollama, FastAPI, PDFs or AWS needed.
+Importing `train.py` does not run experiments. Create the virtual environment in
+this repository rather than borrowing another project's installed packages.
 
 ## Using a saved model
 
@@ -67,14 +75,14 @@ labels in the order returned by the dataset's `target_names` (alphabetical for
 these categories: hockey, medicine, space, politics/guns), not the order of the
 input `CATEGORIES` list. Only load model artifacts you trust.
 
-## Migration and limitations
+## Local artifacts and limitations
 
-Extracted from Doc-Bot on October 17, 2026. The original training script and broad
-learning roadmap remain recoverable in Doc-Bot's Git history; local migration
-backups also preserve the original script and database. Existing MLflow database
-and artifacts are local-only, with artifact locations relocated to this project.
+Existing MLflow database and artifacts are local-only. The training script resolves
+their locations relative to this repository, not another application's directory.
 A fresh clone starts without that private experiment history; run training to
 generate your own records. CI runs small regression tests, not the full benchmark.
+
+See [Development record](PROGRESS.md) for historical migration and verification notes.
 
 This is an educational four-topic classifier, not a general-purpose language model
 or production classification service. Labels can be ambiguous, vocabulary can drift,
